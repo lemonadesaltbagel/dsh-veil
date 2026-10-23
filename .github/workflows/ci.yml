@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: unit + e2e (real dsh, real veil, scripted model)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install veil, dsh and pnpm
+        run: |
+          python -m pip install --quiet "veil-proxy>=0.3.1"
+          npm install -g --no-fund --no-audit pnpm @deepseek-ai/dsh@0.2.1-rc.2
+          veil --help | head -1
+          dsh --version
+      - run: npm ci --no-fund --no-audit
+      - run: npm run build
+      - run: npm test
+      - run: npm run e2e
+      - name: Package contents
+        run: npm pack --dry-run 2>&1 | tail -12

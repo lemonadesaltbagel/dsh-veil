@@ -1,0 +1,31 @@
+# dsh-veil: DeepSeek Harness model traffic goes through veil (a local privacy proxy).
+#
+# The `veil` row starts `veil proxy` and provides the `veil` service once the proxy
+# answers. Both DeepSeek routes inject that service and take their baseURL from it,
+# so they register no model route until veil is up: if veil cannot start, dsh has no
+# DeepSeek model to call rather than one that bypasses veil.
+#
+# A patch replaces a row's whole `config`. The base rows set none, so these rows
+# restate only baseURL. A later layer (your profile's cordis.patch.yml, a --patch
+# overlay) that replaces these rows' config without baseURL sends requests to
+# $DEEPSEEK_BASE_URL or the official API instead; the plugin's fetch guard refuses
+# those requests.
+
+- insert:
+    - id: veil
+      name: dsh-veil
+
+- id: llm-deepseek
+  inject: [veil]
+  config:
+    baseURL: !!js ctx.veil.baseURL
+
+- id: llm-deepseek-account
+  inject: [veil]
+  config:
+    baseURL: !!js ctx.veil.baseURL
+
+# pi-ai routes other providers (OpenAI, Gemini, ...) straight to their APIs. Its routes
+# don't go through veil, so the row stays off while this bundle is installed.
+- id: llm-pi-ai
+  disabled: true

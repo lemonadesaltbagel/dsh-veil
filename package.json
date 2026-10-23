@@ -1,0 +1,48 @@
+{
+  "name": "dsh-veil",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness plugin: the model sees consistent pseudonyms, your machine keeps the real values (veil privacy proxy)",
+  "keywords": ["deepseek-harness", "dsh", "dsh-plugin", "privacy", "pii", "pseudonymization", "veil"],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lemonadesaltbagel/dsh-veil.git"
+  },
+  "homepage": "https://github.com/lemonadesaltbagel/dsh-veil",
+  "bugs": "https://github.com/lemonadesaltbagel/dsh-veil/issues",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/index.d.ts",
+    "cordis.patch.yml"
+  ],
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.1-rc.2 <0.3.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "tsc -p tsconfig.json",
+    "test": "node --test test/unit.test.mjs",
+    "e2e": "node test/e2e.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}
